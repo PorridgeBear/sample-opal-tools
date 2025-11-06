@@ -79,6 +79,38 @@ async function todaysDate(parameters: DateParameters) {
   };
 }
 
+async function assessPageTitleForSEO(parameters: { url: string }) {
+  const { url } = parameters;
+  
+  const response = await fetch(url);
+  const html = await response.text();
+  const titleMatch = html.match(/<title>(.*?)<\/title>/i);
+  
+  const title = titleMatch ? titleMatch[1] : 'No title found';
+
+  const heuristics = [
+    { description: 'Title is present', isValid: !!title },
+    { description: 'Title is not too short', isValid: title.length > 10 },
+    { description: 'Title is not too long', isValid: title.length < 60 }
+  ];
+  
+  const assessment = heuristics.map(h => ({
+    description: h.description,
+    isValid: h.isValid
+  }));
+
+  const overallAssessment = {
+    isValid: heuristics.every(h => h.isValid),
+    details: assessment
+  };
+
+  return {
+    url,
+    title,
+    overallAssessment
+  };
+}
+
 // Register the tools using decorators with explicit parameter definitions
 tool({
   name: 'greeting',
@@ -111,6 +143,19 @@ tool({
     }
   ]
 })(todaysDate);
+
+tool({
+  name: 'assess-page-title-for-seo',
+  description: 'Assesses the page title of a given URL for SEO best practices',
+  parameters: [
+    {
+      name: 'url',
+      type: ParameterType.String,
+      description: 'The URL of the webpage to assess',
+      required: true
+    }
+  ]
+})(assessPageTitleForSEO);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
