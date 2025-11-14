@@ -17,13 +17,19 @@ class GreetingParameters(BaseModel):
 class DateParameters(BaseModel):
     format: Optional[str] = Field("%Y-%m-%d", description="Date format (defaults to ISO format)")
 
-@requires_auth(provider="OptiID", scope_bundle="greet", required=True)
-@tool("greeting", "Greets a person in a random language (English, Spanish, or French)")
-async def greeting(parameters: GreetingParameters):
+@tool("greeting", 
+      "Greets a person in a random language (English, Spanish, or French)",
+      auth_requirements=[
+        {"provider": "OptiID", "scope_bundle": "greet", "required": True}
+    ]
+ )
+async def greeting(parameters: GreetingParameters, , auth_data: Optional[AuthData] = None):
     """Greets a person in a random language."""
     # Get parameters
     name = parameters.name
     language = parameters.language
+
+    print(auth_data)
     
     # If language not specified, choose randomly
     if not language:
