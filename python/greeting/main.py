@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from typing import Optional
 from opal_tools_sdk import ToolsService, tool
+from opal_tools_sdk.auth import requires_auth
 
 app = FastAPI(title="Sample Opal Tools Service")
 tools_service = ToolsService(app)
@@ -16,6 +17,7 @@ class GreetingParameters(BaseModel):
 class DateParameters(BaseModel):
     format: Optional[str] = Field("%Y-%m-%d", description="Date format (defaults to ISO format)")
 
+@requires_auth(provider="OptiID", scope_bundle="greet", required=True)
 @tool("greeting", "Greets a person in a random language (English, Spanish, or French)")
 async def greeting(parameters: GreetingParameters):
     """Greets a person in a random language."""
