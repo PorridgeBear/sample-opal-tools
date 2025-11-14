@@ -23,7 +23,7 @@ class DateParameters(BaseModel):
         {"provider": "OptiID", "scope_bundle": "greet", "required": True}
     ]
  )
-async def greeting(parameters: GreetingParameters, , auth_data: Optional[AuthData] = None):
+async def greeting(parameters: GreetingParameters, auth_data: Optional[AuthData] = None):
     """Greets a person in a random language."""
     # Get parameters
     name = parameters.name
