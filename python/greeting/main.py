@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from opal_tools_sdk import ToolsService, tool
 from opal_tools_sdk.auth import requires_auth
+from opal_tools_sdk.models import AuthData
 
 app = FastAPI(title="Sample Opal Tools Service")
 tools_service = ToolsService(app)
